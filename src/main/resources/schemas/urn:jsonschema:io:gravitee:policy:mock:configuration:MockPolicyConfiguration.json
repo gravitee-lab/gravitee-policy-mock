@@ -1,0 +1,40 @@
+{
+  "type" : "object",
+  "id" : "urn:jsonschema:io:gravitee:policy:mock:configuration:MockPolicyConfiguration",
+  "properties" : {
+    "status" : {
+      "title": "HTTP Status Code",
+      "type" : "integer"
+    },
+    "headers" : {
+      "type" : "array",
+      "title": "Headers",
+      "items" : {
+        "type" : "object",
+        "id" : "urn:jsonschema:io:gravitee:policy:mock:configuration:HttpHeader",
+        "title": "Header",
+        "properties" : {
+          "name" : {
+            "title": "Name",
+            "type" : "string"
+          },
+          "value" : {
+            "title": "Value",
+            "type" : "string"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ]
+    },
+    "content" : {
+      "title": "Body",
+      "type" : "string"
+    }
+  },"required": [
+      "status",
+      "headers"
+  ]
+}
