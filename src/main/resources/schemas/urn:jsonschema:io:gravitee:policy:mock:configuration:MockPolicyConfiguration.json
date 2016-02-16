@@ -31,7 +31,11 @@
     },
     "content" : {
       "title": "Body",
-      "type" : "string"
+      "type" : "string",
+      "x-schema-form": {
+        "type": "textarea",
+        "placeholder": "Place your body content here"
+      }
     }
   },"required": [
       "status",
