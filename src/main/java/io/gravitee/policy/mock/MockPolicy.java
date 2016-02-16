@@ -84,12 +84,20 @@ public class MockPolicy {
 
         @Override
         public void end() {
-            clientResponse.headers.set(HttpHeaders.CONTENT_LENGTH, Integer.toString(
-                    mockPolicyConfiguration.getContent().length()));
+            String content = mockPolicyConfiguration.getContent();
+            boolean hasContent = (content != null && content.length() > 0);
+
+            if (hasContent) {
+                clientResponse.headers.set(HttpHeaders.CONTENT_LENGTH, Integer.toString(
+                        mockPolicyConfiguration.getContent().length()));
+            }
 
             clientResponseHandler.handle(clientResponse);
 
-            clientResponse.bodyHandler.handle(new StringBodyPart(mockPolicyConfiguration.getContent()));
+            if (hasContent) {
+                clientResponse.bodyHandler.handle(new StringBodyPart(mockPolicyConfiguration.getContent()));
+            }
+            
             clientResponse.endHandler.handle(null);
         }
     }
