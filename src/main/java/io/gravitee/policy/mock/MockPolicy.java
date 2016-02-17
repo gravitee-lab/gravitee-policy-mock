@@ -23,6 +23,7 @@ import io.gravitee.gateway.api.http.StringBodyPart;
 import io.gravitee.policy.api.PolicyChain;
 import io.gravitee.policy.api.annotations.OnRequest;
 import io.gravitee.policy.mock.configuration.MockPolicyConfiguration;
+import io.gravitee.policy.mock.utils.StringUtils;
 
 /**
  * @author David BRASSELY (brasseld at gmail.com)
@@ -52,7 +53,7 @@ public class MockPolicy {
 
         @Override
         public ClientRequest invoke(ExecutionContext executionContext, Request serverRequest, Handler<ClientResponse> result) {
-            final ClientRequest clientRequest = new MockClientRequest(new MockClientResponse(), result);
+            final ClientRequest clientRequest = new MockClientRequest(executionContext, new MockClientResponse(), result);
 
             serverRequest
                     .bodyHandler(clientRequest::write)
@@ -64,10 +65,12 @@ public class MockPolicy {
 
     class MockClientRequest implements ClientRequest {
 
+        private final ExecutionContext executionContext;
         private final MockClientResponse clientResponse;
         private final Handler<ClientResponse> clientResponseHandler;
 
-        MockClientRequest(final MockClientResponse clientResponse, final Handler<ClientResponse> clientResponseHandler) {
+        MockClientRequest(final ExecutionContext executionContext, final MockClientResponse clientResponse, final Handler<ClientResponse> clientResponseHandler) {
+            this.executionContext = executionContext;
             this.clientResponse = clientResponse;
             this.clientResponseHandler = clientResponseHandler;
         }
@@ -88,14 +91,19 @@ public class MockPolicy {
             boolean hasContent = (content != null && content.length() > 0);
 
             if (hasContent) {
-                clientResponse.headers.set(HttpHeaders.CONTENT_LENGTH, Integer.toString(
-                        mockPolicyConfiguration.getContent().length()));
+                content = executionContext.getTemplateEngine().convert(content);
+
+                clientResponse.headers.set(HttpHeaders.CONTENT_LENGTH, Integer.toString(content.length()));
+                // Trying to discover content type
+                if (! clientResponse.headers.containsKey(HttpHeaders.CONTENT_TYPE)) {
+                    clientResponse.headers.set(HttpHeaders.CONTENT_TYPE, getContentType(content));
+                }
             }
 
             clientResponseHandler.handle(clientResponse);
 
             if (hasContent) {
-                clientResponse.bodyHandler.handle(new StringBodyPart(mockPolicyConfiguration.getContent()));
+                clientResponse.bodyHandler.handle(new StringBodyPart(content));
             }
             
             clientResponse.endHandler.handle(null);
@@ -140,6 +148,16 @@ public class MockPolicy {
         public ClientResponse endHandler(Handler<Void> endHandler) {
             this.endHandler = endHandler;
             return this;
+        }
+    }
+
+    private static String getContentType(String content) {
+        if (StringUtils.isJSON(content)) {
+            return "application/json";
+        } else if (StringUtils.isXML(content)) {
+            return "text/xml";
+        } else {
+            return "text/plain";
         }
     }
 }
