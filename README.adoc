@@ -1,9 +1,9 @@
-=== Mock Policy
+= Mock Policy
 
 https://github.com/gravitee-io/gravitee-policy-mock[Source code],
 image:http://build.gravitee.io/jenkins/buildStatus/icon?job=gravitee-policy-mock["Build status", link="http://build.gravitee.io/jenkins/job/gravitee-policy-mock/"]
 
-==== Scope
+== Scope
 
 |===
 |onRequest |onResponse
@@ -13,11 +13,11 @@ image:http://build.gravitee.io/jenkins/buildStatus/icon?job=gravitee-policy-mock
 
 |===
 
-==== Description
+== Description
 
 Todo
 
-==== Configuration
+== Configuration
 
 You can configure the policy with the following options :
 
