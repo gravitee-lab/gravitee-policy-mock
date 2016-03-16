@@ -17,9 +17,8 @@ package io.gravitee.policy.mock;
 
 import io.gravitee.common.http.HttpHeaders;
 import io.gravitee.gateway.api.*;
+import io.gravitee.gateway.api.buffer.Buffer;
 import io.gravitee.gateway.api.handler.Handler;
-import io.gravitee.gateway.api.http.BodyPart;
-import io.gravitee.gateway.api.http.StringBodyPart;
 import io.gravitee.policy.api.PolicyChain;
 import io.gravitee.policy.api.annotations.OnRequest;
 import io.gravitee.policy.mock.configuration.MockPolicyConfiguration;
@@ -81,7 +80,7 @@ public class MockPolicy {
         }
 
         @Override
-        public ClientRequest write(BodyPart bodyPart) {
+        public ClientRequest write(Buffer chunk) {
             return this;
         }
 
@@ -103,7 +102,7 @@ public class MockPolicy {
             clientResponseHandler.handle(clientResponse);
 
             if (hasContent) {
-                clientResponse.bodyHandler.handle(new StringBodyPart(content));
+                clientResponse.bodyHandler.handle(Buffer.buffer(content));
             }
             
             clientResponse.endHandler.handle(null);
@@ -114,7 +113,7 @@ public class MockPolicy {
 
         private final HttpHeaders headers = new HttpHeaders();
 
-        private Handler<BodyPart> bodyHandler;
+        private Handler<Buffer> bodyHandler;
         private Handler<Void> endHandler;
 
         MockClientResponse() {
@@ -139,8 +138,8 @@ public class MockPolicy {
         }
 
         @Override
-        public ClientResponse bodyHandler(Handler<BodyPart> bodyPartHandler) {
-            this.bodyHandler = bodyPartHandler;
+        public ClientResponse bodyHandler(Handler<Buffer> bodyHandler) {
+            this.bodyHandler = bodyHandler;
             return this;
         }
 
