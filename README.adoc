@@ -19,7 +19,8 @@ endif::[]
 == Description
 
 Mock policy is providing you with the ability to create mocked response when a consumer is calling one of your services.
-This way, you do not have to provide a functional backend and give you more time to think about your API contract.
+This way, you do not have to provide a functional backend and it gives you more time to think about your API contract.
+
 You can think this policy as a contract-first approach since you are able to create a fully-functional API without the
 need to write any line of code to handle consumer calls.
 
@@ -32,7 +33,7 @@ When defining response body content, you can use the internal Expression Languag
 .Body content example (xml)
 ----
 <user id="{#request.paths[3]}">
-	<firstname>{#properties['firstname_' + #request.paths[3]]}</firstname>
+    <firstname>{#properties['firstname_' + #request.paths[3]]}</firstname>
 	<lastname>{#properties['lastname_' + #request.paths[3]]}</lastname>
 	<age>{(T(java.lang.Math).random() * 60).intValue()}</age>
 	<createdAt>{(new java.util.Date()).getTime()}</createdAt>
@@ -51,7 +52,7 @@ When defining response body content, you can use the internal Expression Languag
 }
 ----
 
-Also, you don't have to take care about the _Content-Type_ header since the policy is able to detect automatically the
+Also, you don't have to take care about the _Content-Type_ header since Mock policy is able to detect automatically the
 content type.
 
 == Configuration
